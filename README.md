@@ -4,7 +4,12 @@
 [![Android](https://img.shields.io/badge/Platform-Android-green.svg)](https://www.android.com/)
 [![Kotlin](https://img.shields.io/badge/Language-Kotlin-orange.svg)](https://kotlinlang.org/)
 
+
 一款将网易云音乐加密格式 NCM 转换为标准 MP3/FLAC 的 Android 应用。让无数的歌手破防的一个项目！😄
+
+
+一款将网易云音乐加密格式 NCM 转换为标准 MP3/FLAC 的 Android 应用。
+
 
 ## ✨ 功能特性
 

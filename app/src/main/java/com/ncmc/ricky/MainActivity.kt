@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.card.MaterialCardView
 import android.widget.ProgressBar
 import com.ncmc.ricky.adapter.ConversionAdapter
@@ -43,6 +44,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var inputPath: EditText
     private lateinit var outputPath: EditText
     private lateinit var btnStart: MaterialButton
+    private lateinit var threadToggle: MaterialButtonToggleGroup
     private lateinit var progressCard: MaterialCardView
     private lateinit var progressBar: ProgressBar
     private lateinit var tvProgress: TextView
@@ -73,6 +75,11 @@ class MainActivity : AppCompatActivity() {
         val prefs = getSharedPreferences("ncmc", MODE_PRIVATE)
         inputPath.setText(prefs.getString("input_dir", StorageUtil.defaultInputDir().absolutePath))
         outputPath.setText(prefs.getString("output_dir", StorageUtil.defaultOutputDir().absolutePath))
+        when (prefs.getInt("threads", 2)) {
+            4 -> threadToggle.check(R.id.thread4)
+            8 -> threadToggle.check(R.id.thread8)
+            else -> threadToggle.check(R.id.thread2)
+        }
 
         findViewById<MaterialButton>(R.id.btnPickInput).setOnClickListener {
             openPicker(REQ_PICK_INPUT, inputPath.text.toString())
@@ -89,6 +96,7 @@ class MainActivity : AppCompatActivity() {
         inputPath = findViewById(R.id.inputPath)
         outputPath = findViewById(R.id.outputPath)
         btnStart = findViewById(R.id.btnStart)
+        threadToggle = findViewById(R.id.threadToggle)
         progressCard = findViewById(R.id.progressCard)
         progressBar = findViewById(R.id.progressBar)
         tvProgress = findViewById(R.id.tvProgress)
@@ -150,15 +158,23 @@ class MainActivity : AppCompatActivity() {
             toast(getString(R.string.output_not_writable))
         }
 
+        val threads = when (threadToggle.checkedButtonId) {
+            R.id.thread4 -> 4
+            R.id.thread8 -> 8
+            else -> 2
+        }
+
         getSharedPreferences("ncmc", MODE_PRIVATE).edit()
             .putString("input_dir", input)
             .putString("output_dir", outDir)
+            .putInt("threads", threads)
             .apply()
 
         val intent = Intent(this, NcmConversionService::class.java)
             .setAction(ConversionEngine.ACTION_START)
             .putExtra(ConversionEngine.EXTRA_INPUT, input)
             .putExtra(ConversionEngine.EXTRA_OUTPUT, outDir)
+            .putExtra(ConversionEngine.EXTRA_THREADS, threads)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startForegroundService(intent)
         } else {

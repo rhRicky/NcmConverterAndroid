@@ -25,6 +25,7 @@ object ConversionEngine {
 
     const val EXTRA_INPUT = "input_dir"
     const val EXTRA_OUTPUT = "output_dir"
+    const val EXTRA_THREADS = "threads"
     const val EXTRA_SUCCESS = "success"
     const val EXTRA_FAILED = "failed"
 
@@ -41,6 +42,9 @@ object ConversionEngine {
     var outputDir: String = ""
 
     @Volatile
+    var threadCount = 2
+
+    @Volatile
     var totalBytes: Long = 0
 
     @Volatile
@@ -50,10 +54,10 @@ object ConversionEngine {
         java.util.Collections.synchronizedList(mutableListOf<ConversionItem>())
     val completedBytes = AtomicLong(0)
 
-    private val executor = Executors.newFixedThreadPool(2)
+    private var executor: java.util.concurrent.ExecutorService? = null
 
     @Synchronized
-    fun start(inputDir: File, outDir: File, context: Context) {
+    fun start(inputDir: File, outDir: File, threads: Int, context: Context) {
         if (running) return
 
         val files = inputDir.listFiles { _, name ->
@@ -62,6 +66,7 @@ object ConversionEngine {
 
         cancelled = false
         running = true
+        threadCount = threads.coerceIn(1, 8)
         successCounter.set(0)
         failedCounter.set(0)
         completedBytes.set(0)
@@ -78,8 +83,11 @@ object ConversionEngine {
             markDone(context)
             return
         }
+        executor?.shutdown()
+        val pool = Executors.newFixedThreadPool(threadCount)
+        executor = pool
         for (item in items) {
-            executor.execute { convertOne(item, outDir, context) }
+            pool.execute { convertOne(item, outDir, context) }
         }
     }
 
@@ -144,6 +152,8 @@ object ConversionEngine {
 
     private fun markDone(context: Context) {
         running = false
+        executor?.shutdown()
+        executor = null
         val intent = Intent(ACTION_FINISHED)
             .setPackage(context.packageName)
             .putExtra(EXTRA_SUCCESS, successCounter.get())

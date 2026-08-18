@@ -6,6 +6,10 @@
 
     <string name="input_label">NCM 文件所在目录</string>
     <string name="output_label">输出目录</string>
+    <string name="thread_label">并发线程数</string>
+    <string name="thread_2">2 线程</string>
+    <string name="thread_4">4 线程</string>
+    <string name="thread_8">8 线程</string>
     <string name="browse">浏览</string>
     <string name="btn_start">开始转换</string>
     <string name="btn_cancel">取消转换</string>

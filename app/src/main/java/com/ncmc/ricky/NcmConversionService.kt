@@ -60,6 +60,7 @@ class NcmConversionService : Service() {
 
         val input = intent.getStringExtra(ConversionEngine.EXTRA_INPUT)
         val output = intent.getStringExtra(ConversionEngine.EXTRA_OUTPUT)
+        val threads = intent.getIntExtra(ConversionEngine.EXTRA_THREADS, 2)
         if (input.isNullOrEmpty() || output.isNullOrEmpty()) {
             stopSelf()
             return
@@ -68,7 +69,7 @@ class NcmConversionService : Service() {
         startForeground(NOTIFICATION_ID, buildNotification(0, 0, getString(R.string.notification_preparing)))
         if (!wakelock.isHeld) wakelock.acquire()
 
-        ConversionEngine.start(File(input), File(output), applicationContext)
+        ConversionEngine.start(File(input), File(output), threads, applicationContext)
 
         // 守护线程：等待转换结束后回收前台状态
         Thread {

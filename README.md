@@ -104,6 +104,16 @@ pip install pycryptodome mutagen
 - 作者不对使用本工具产生的任何后果负责
 - 请勿用于商业目的或传播受版权保护的內容
 
+## Star History
+
+<a href="https://www.star-history.com/?repos=rhricky%2Fncmconverterandroid&type=date&legend=bottom-right">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=rhricky/ncmconverterandroid&type=date&theme=dark&legend=bottom-right" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=rhricky/ncmconverterandroid&type=date&legend=bottom-right" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=rhricky/ncmconverterandroid&type=date&legend=bottom-right" />
+ </picture>
+</a>
+
 ## 🔗 相关链接
 
 - [网易云音乐 NCM 格式](https://music.163.com/)
